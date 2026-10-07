@@ -2,10 +2,12 @@
 <html lang="ja">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#f5f4ee">
   <title>こもれびカリンバ — Moon River</title>
   <link rel="stylesheet" href="style.css">
   <script defer src="music.js"></script>
+  <script defer src="layout.js"></script>
   <script defer src="app.js"></script>
 </head>
 <body>
@@ -13,7 +15,16 @@
     <div class="brand"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span><div>こもれびカリンバ<small>KALIMBA PRACTICE</small></div></div>
     <div class="header-right"><span class="offline"><span></span>オフラインで練習</span><span class="instrument">17 keys <b>·</b> C major</span></div>
   </header>
+  <nav class="mobile-bar" aria-label="練習メニュー">
+    <div class="mobile-song">Moon River <small>17鍵 · C調</small></div>
+    <div class="mobile-actions">
+      <button id="open-settings" class="mobile-button" aria-haspopup="dialog" aria-controls="settings-dialog" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 17h16M8 4v6M16 14v6"/></svg>設定 <span id="mobile-speed">100%</span></button>
+      <button id="fullscreen" class="mobile-button square-button" aria-label="全画面にする" title="全画面にする" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 4H4v4m12-4h4v4M4 16v4h4m12-4v4h-4"/></svg></button>
+      <button id="mobile-help" class="mobile-button square-button" aria-label="使い方"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.5 8a2.5 2.5 0 0 1 5 0c0 2-2.5 2-2.5 4m0 3v1"/></svg></button>
+    </div>
+  </nav>
   <main>
+    <div class="rotate-hint"><svg viewBox="0 0 32 32" aria-hidden="true"><rect x="10" y="4" width="12" height="24" rx="3" transform="rotate(-35 16 16)"/><path d="M3 13a13 13 0 0 1 21-8m0-4v5h-5"/></svg><div><strong>スマートフォンは横向きがおすすめ</strong><span>17鍵とマーカーを大きく表示できます。</span></div></div>
     <section class="song-heading">
       <div><div class="eyebrow">今日の一曲 <span>MELODY</span></div><h1>Moon River</h1><p>Henry Mancini <span>／</span> 数字付きカリンバ譜から</p></div>
       <div class="song-meta"><div><strong>3/4</strong><span>拍子</span></div><div><strong>90</strong><span>基準 BPM</span></div><div><strong>38</strong><span>小節</span></div></div>
@@ -39,6 +50,11 @@
     <footer><span>数字と上の点は、実機の刻印に対応しています。画面の鍵盤を押すと音を確認できます。</span><button id="help" class="text-button">使い方・曲について</button></footer>
     <p id="notice" role="status" class="notice" hidden></p>
   </main>
+  <dialog id="settings-dialog" aria-labelledby="settings-dialog-title">
+    <div class="settings-dialog-header"><h2 id="settings-dialog-title">練習の設定</h2><button id="close-settings" class="mobile-button" aria-label="練習設定を閉じる">完了</button></div>
+    <p class="settings-dialog-note">設定中は一時停止します。閉じてから再生してください。</p>
+    <div id="settings-mount"></div>
+  </dialog>
   <dialog id="help-dialog"><button id="close-help" class="close-button" aria-label="閉じる">×</button><div class="eyebrow">QUICK GUIDE</div><h2>画面を見ながら、実機で演奏。</h2><ol><li>カリンバを画面と同じ向きで持ちます。中央が「1 / C」です。</li><li>「練習をはじめる」を押すと、3拍のカウント後に曲が始まります。</li><li>マーカーの中央が水平ラインに来たら、その列の鍵盤を1回はじきます。</li><li>苦手な部分は速度を下げ、開始・終了小節を指定してくり返しましょう。</li></ol><p>点1つは1オクターブ上、点2つは2オクターブ上です。色は左側・中央・右側の位置の目印です。</p><p>タイでつながる音は弾き直しません。区間の途中から始める場合も、タイの途中に新しいマーカーは出ません。</p><hr><h3>この試作について</h3><p>ご提供いただいた「Kalimba Class / Moon River」の譜面を入力した、単音メロディー版です。3/4拍子、原速90 BPM、全38小節。お手本音は合成音です。</p><p>実機の音の認識・採点はありません。曲はMoon Riverを内蔵しています。MIDIの読み込みは今後の拡張対象です。</p><p>設定はこのブラウザーに保存します。別のタブに移ったときは、練習を自動で一時停止します。</p></dialog>
 </body>
 </html>

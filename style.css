@@ -6,3 +6,112 @@
 @media(max-width:820px){.header{height:70px;padding:0 20px}.offline{display:none}main{padding:22px 18px 12px}.workspace{grid-template-columns:1fr}.settings{display:grid;grid-template-columns:1fr 1fr;gap:0 24px}.settings-heading{grid-column:1/-1}.practice-tip{align-self:center}.song-meta>div{padding:0 12px}.song-meta strong{font-size:21px}.stage{height:470px}.shortcut{display:inline}.settings .loop-section{border-bottom:1px solid var(--line)}.stage-top{font-size:9px}footer{align-items:flex-start}.song-heading{margin-bottom:20px}.brand{font-size:16px}}
 @media(max-width:520px){main{padding:20px 10px}.brand small{font-size:7px}.header{padding:0 13px}.header-right .instrument{font-size:9px;padding:7px 9px}.song-meta>div{padding:0 8px}.song-meta>div:last-child{display:none}h1{font-size:34px}.stage{height:430px}.stage-caption{font-size:8px}.shortcut{display:none}.transport-note{min-width:90px}.transport-note small{font-size:8px}.play-button{min-width:130px;font-size:11px;padding:0 10px}.transport-buttons{gap:3px}.settings{gap:0 18px}.stage-top{padding:0 11px}.stage-label{min-width:125px}.song-heading p{font-size:9px}.song-heading p span{margin:0 3px}footer{font-size:8px}.transport-row{flex-wrap:wrap;row-gap:10px}.transport{padding:12px 10px}}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
+
+/* Phone controls share the same settings panel as the desktop sidebar. */
+.mobile-bar,.rotate-hint{display:none}
+.mobile-button{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-width:44px;min-height:44px;padding:0 12px;border:1px solid #d7dfce;border-radius:9px;background:#fcfdf7;color:var(--green);font-size:13px;touch-action:manipulation}
+.mobile-button svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+.square-button{width:44px;padding:0}
+.mobile-button:active{background:#e8efdf}
+.mobile-song{font:22px Georgia,serif;white-space:nowrap;line-height:1.1}
+.mobile-song small{font:10px "Yu Gothic UI",sans-serif;color:var(--muted);margin-left:10px}
+.mobile-actions{display:flex;gap:6px;align-items:center}
+#mobile-speed{font-variant-numeric:tabular-nums;font-size:11px;color:#738566}
+#settings-dialog{width:min(680px,calc(100% - 24px));max-width:680px;max-height:calc(100vh - 24px);max-height:calc(100dvh - 24px);padding:0;overscroll-behavior:contain;scrollbar-gutter:stable}
+.settings-dialog-header{position:sticky;top:0;z-index:1;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 18px;background:#fcfdf6;border-bottom:1px solid var(--line)}
+.settings-dialog-header h2{font-size:17px;margin:0}
+#settings-dialog .settings-dialog-note{font-size:11px;line-height:1.7;margin:12px 18px 0;color:#79896d}
+#settings-mount .settings{border:0;border-radius:0;padding:0 18px 18px;background:transparent}
+#settings-mount .settings-heading{display:none}
+.close-button{min-width:44px;min-height:44px;touch-action:manipulation}
+dialog{max-height:calc(100vh - 24px);max-height:calc(100dvh - 24px);overflow:auto}
+.compact-ui{padding-left:env(safe-area-inset-left,0px);padding-right:env(safe-area-inset-right,0px);-webkit-text-size-adjust:100%;text-size-adjust:100%}
+.compact-ui .header{display:none}
+.compact-ui .mobile-bar{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:54px;padding:4px 12px;background:#fafbf6;border-bottom:1px solid var(--line);flex-shrink:0}
+.compact-ui main{padding:12px 10px 10px;width:100%;max-width:none;min-width:0}
+.compact-ui .workspace{display:block;min-width:0}
+.compact-ui .player{border-radius:12px;min-width:0}
+.compact-ui .song-heading{display:none}
+.compact-ui .rotate-hint{display:flex;align-items:center;gap:12px;margin:0 0 12px;padding:13px 14px;background:#e9efdf;border:1px solid #dbe5cd;border-radius:10px}
+.rotate-hint svg{width:30px;height:30px;fill:none;stroke:#68875a;stroke-width:1.8;flex-shrink:0}
+.rotate-hint strong{display:block;font-size:12px;font-weight:600}
+.rotate-hint span{display:block;font-size:11px;line-height:1.6;color:#758565;margin-top:4px}
+.compact-ui .stage{height:clamp(300px,55vh,480px);height:clamp(300px,55svh,480px)}
+.compact-ui canvas{position:absolute;inset:0}
+.compact-ui .stage-top{font-size:10px;height:32px;padding:0 12px}
+.compact-ui .stage-label{min-width:0}
+.compact-ui .icon-button{width:44px;height:44px;padding:11px;touch-action:manipulation}
+.compact-ui .play-button{min-height:44px;min-width:144px;font-size:13px;touch-action:manipulation}
+.compact-ui .transport-buttons{gap:6px}
+.compact-ui .transport-row{margin-top:6px;flex-wrap:nowrap}
+.compact-ui .transport-note{min-width:0;overflow:hidden;font-size:11px}
+.compact-ui .transport-note b{font-size:16px;margin-left:5px}
+.compact-ui .transport-note small{font-size:9px}
+.compact-ui .shortcut{display:none}
+.compact-ui input[type=range]{height:44px;touch-action:pan-y}
+.compact-ui input[type=range]::-webkit-slider-thumb{width:22px;height:22px;margin-top:-9px}
+.compact-ui input[type=range]::-moz-range-thumb{width:18px;height:18px}
+.compact-ui .settings{display:grid;grid-template-columns:1fr 1fr;column-gap:26px}
+.compact-ui .setting-section{padding:16px 0}
+.compact-ui .setting-title{font-size:14px;margin-bottom:0}
+.compact-ui .setting-title strong{font-size:26px}
+.compact-ui .range-caption,.compact-ui .hint{font-size:11px}
+.compact-ui .presets{margin-top:12px}
+.compact-ui .presets button{min-height:44px;font-size:13px}
+.compact-ui .toggle-row{min-height:44px;font-size:13px}
+.compact-ui .toggle-row small{font-size:10px}
+.compact-ui .switch{width:38px;height:23px}
+.compact-ui .switch:after{width:17px;height:17px}
+.compact-ui .toggle-row input:checked+.switch:after{left:18px}
+.compact-ui .toggle-row input{width:44px;height:44px}
+.compact-ui .sound-settings{gap:4px}
+.compact-ui .volume-row{font-size:12px}
+.compact-ui .loop-fields label{font-size:12px;min-width:0}
+.compact-ui .loop-fields input{min-height:44px;font-size:16px}
+.compact-ui .practice-tip{grid-column:1/-1;margin-top:8px}
+.compact-ui .practice-tip strong{font-size:13px}
+.compact-ui .practice-tip p{font-size:12px}
+.compact-ui footer{padding:12px 3px 0;font-size:10px}
+.compact-ui footer .text-button{display:none}
+.compact-ui .countdown{padding:8px 25px;min-width:140px;top:15%}
+.compact-ui .countdown strong{font-size:42px}
+.compact-ui .notice{bottom:calc(10px + env(safe-area-inset-bottom,0px));font-size:12px;width:max-content;max-width:90%;line-height:1.6}
+@media(orientation:landscape){
+  .compact-ui{height:100vh;height:100dvh;min-height:280px;display:flex;flex-direction:column;overflow:hidden;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+  .compact-ui .mobile-bar{min-height:50px;height:50px;padding:3px 12px}
+  .compact-ui main{flex:1;min-height:0;display:flex;flex-direction:column;padding:3px 8px 6px;margin:0}
+  .compact-ui .rotate-hint,.compact-ui footer{display:none}
+  .compact-ui .workspace{flex:1;min-height:0}
+  .compact-ui .player{height:100%;display:grid;grid-template-rows:24px minmax(0,1fr) 64px;border-radius:9px}
+  .compact-ui .stage-top{height:24px;font-size:10px}
+  .compact-ui .stage{height:auto;min-height:0;max-height:none}
+  .compact-ui .stage-caption{display:none}
+  .compact-ui .transport{display:grid;grid-template-columns:minmax(100px,1fr) auto;grid-template-rows:28px 22px;gap:0 20px;padding:5px 14px 7px}
+  .compact-ui .timeline-row{grid-column:1;grid-row:1;gap:10px;min-width:0;font-size:11px}
+  .compact-ui .timeline-row input{height:32px}
+  .compact-ui .transport-row{display:contents}
+  .compact-ui .transport-note{grid-column:1;grid-row:2;white-space:nowrap;font-size:11px;overflow:hidden;text-overflow:ellipsis;line-height:22px}
+  .compact-ui .transport-note b{font-size:14px}
+  .compact-ui .transport-note small{display:none}
+  .compact-ui .transport-buttons{grid-column:2;grid-row:1/3;align-self:center}
+  .compact-ui .play-button{min-width:156px}
+  .compact-ui .countdown{top:8%;padding:5px 25px}
+}
+@media(max-width:520px){
+  .compact-ui .mobile-song{font-size:20px}
+  .compact-ui .mobile-song small{display:block;font-size:9px;margin:4px 0 0}
+  .compact-ui .mobile-actions{gap:4px}
+  .compact-ui .transport{padding:7px 10px 10px}
+  .compact-ui .transport-note small{display:none}
+  .compact-ui .transport-buttons{gap:3px}
+  .compact-ui .play-button{min-width:126px;padding:0 9px;font-size:12px}
+  .compact-ui .settings{grid-template-columns:1fr}
+  .compact-ui .practice-tip{grid-column:1}
+  #settings-dialog{width:calc(100% - 16px)}
+}
+@media(max-width:380px){
+  #mobile-speed{display:none}
+  .compact-ui .mobile-bar{padding-left:9px;padding-right:9px}
+  .compact-ui .transport-note{font-size:9px}
+  .compact-ui .play-button{min-width:112px;font-size:11px}
+}

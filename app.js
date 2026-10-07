@@ -16,6 +16,10 @@
   const voices = new Set(), previewFlashes = new Map();
   const ranges = [...document.querySelectorAll('input[type=range]')];
   const beatDots = [...document.querySelectorAll('.beat-indicator i')];
+  const compactLayout = matchMedia('(max-width: 900px), (orientation: landscape) and (max-height: 600px), (pointer: coarse) and (max-width: 1400px)');
+  const settingsPanel = document.querySelector('.settings');
+  const settingsHome = settingsPanel.parentElement;
+  let seeking = false, seekWasPlaying = false;
   function save() { try { localStorage.setItem('komorebi-settings-v1', JSON.stringify(settings)); } catch (_) {} }
   function bounds() { return settings.loop ? M.loopRange(settings.loopStart,settings.loopEnd) : {start:0,end:song.totalBeats}; }
   function rate() { return settings.speed / 100; }
@@ -27,7 +31,7 @@
   async function ensureAudio() {
     if (!audio) {
       const Audio = window.AudioContext || window.webkitAudioContext;
-      if (!Audio) throw new Error('このブラウザーでは音声機能を利用できません。EdgeまたはChromeで開いてください。');
+      if (!Audio) throw new Error('このブラウザーでは音声機能を利用できません。Safari・Chrome・Edgeのいずれかで開いてください。');
       audio = new Audio({latencyHint:'interactive'});
       master=audio.createGain(); master.gain.value=settings.volume/100; master.connect(audio.destination);
       audio.addEventListener('statechange',()=>{
@@ -140,6 +144,7 @@
   function syncSettings() {
     $('speed').value=settings.speed;$('lead').value=settings.lead;$('volume').value=settings.volume;
     $('speed-value').textContent=settings.speed;$('lead-value').textContent=settings.lead;$('bpm-value').textContent=(song.bpm*rate()).toFixed(1).replace('.0','')+' BPM';
+    $('mobile-speed').textContent=settings.speed+'%';
     for(const [id,key] of [['guide','guide'],['metronome','metronome'],['count-in','countIn'],['loop','loop']]) $(id).checked=settings[key];
     const range=M.loopRange(settings.loopStart,settings.loopEnd);
     settings.loopStart=range.first;settings.loopEnd=range.last;
@@ -155,8 +160,7 @@
     $('play').setAttribute('aria-label',label);
   }
   function geometry() {
-    const padding=Math.max(18,width*.042), laneWidth=(width-padding*2)/17;
-    return {padding,laneWidth,top:42,line:height*.63,boardTop:height*.63+24,boardBottom:height-17};
+    return KalimbaLayout.geometry(width, height);
   }
   function roundRect(x,y,w,h,r,fill,stroke) {
     ctx.beginPath();ctx.roundRect(x,y,w,h,r);if(fill){ctx.fillStyle=fill;ctx.fill();}if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=1;ctx.stroke();}
@@ -167,7 +171,7 @@
   function noteColor(lane) { return lane<8?'#628e80':lane===8?'#9a7e50':'#c3955f'; }
   function draw(beat, now) {
     if(!width || !height) return;
-    const {padding,laneWidth:lw,top,line,boardTop,boardBottom}=geometry();
+    const {padding,laneWidth:lw,top,line,boardTop,boardBottom,compact}=geometry();
     ctx.clearRect(0,0,width,height);
     ctx.fillStyle='#fafbf6';ctx.fillRect(0,0,width,height);
     // One continuous grid: notes and tines share exactly the same x coordinates.
@@ -212,7 +216,7 @@
     // Fixed strike line, independent of the physical tine lengths below.
     ctx.strokeStyle='#8caa82';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(padding-5,line);ctx.lineTo(width-padding+5,line);ctx.stroke();
     for(const x of [padding-6,width-padding+6]) {ctx.beginPath();ctx.arc(x,line,3,0,Math.PI*2);ctx.fillStyle='#8caa82';ctx.fill();}
-    text('弾くタイミング',width/2,line+13,8,'#88967b');
+    text('弾くタイミング',width/2,line+(compact?9:13),8,'#66765b');
     // Stylized wooden body; no remote image or font is required.
     const wood=ctx.createLinearGradient(padding,boardTop,width-padding,boardBottom);
     wood.addColorStop(0,'#b77a40');wood.addColorStop(.28,'#d6a46b');wood.addColorStop(.52,'#c99457');wood.addColorStop(1,'#aa713e');
@@ -224,23 +228,23 @@
     ctx.beginPath();ctx.ellipse(centerX,boardBottom-27,Math.min(30,lw*1.35),18,0,0,Math.PI*2);ctx.fillStyle='#6f472f';ctx.fill();
     ctx.beginPath();ctx.ellipse(centerX,boardBottom-27,Math.min(25,lw*1.15),14,0,0,Math.PI*2);ctx.fillStyle='#4d3527';ctx.fill();
     for(const key of M.keys) {
-      const x=padding+key.lane*lw+lw*.15,kw=lw*.7;
-      const bottom=boardBottom-9-Math.abs(key.lane-8)*Math.min(5,(boardBottom-boardTop-52)/8);
-      const topY=boardTop-5,kh=bottom-topY;
+      const bounds=KalimbaLayout.keyBounds(key.lane,width,height);
+      const x=bounds.x,kw=bounds.width,bottom=bounds.bottom,topY=bounds.top,kh=bottom-topY;
       roundRect(x+2,topY+3,kw,kh,4,'#65441e35');
       const metal=ctx.createLinearGradient(x,0,x+kw,0);metal.addColorStop(0,'#c9cfc6');metal.addColorStop(.2,'#f0f0e6');metal.addColorStop(.8,'#e6e8dc');metal.addColorStop(1,'#b7c0b3');
       roundRect(x,topY,kw,kh,4,hitLanes.has(key.lane)?(key.lane<8?'#b7d8c7':'#f2d29f'):metal,'#f6f4e188');
       if(key.lane===8) roundRect(x+kw*.25,topY+15,kw*.5,3,1,'#b59054');
       const fs=Math.min(16,lw*.51);
-      text(String(key.degree),x+kw/2,bottom-18,fs,hitLanes.has(key.lane)?'#355642':'#667360','600');
-      text(key.name[0],x+kw/2,bottom-34,Math.min(10,lw*.36),'#8e9984');
-      if(key.dots) text('•'.repeat(key.dots),x+kw/2,bottom-47,Math.min(9,lw*.34),'#6f8065');
+      text(String(key.degree),x+kw/2,bottom-(compact?11:18),fs,hitLanes.has(key.lane)?'#355642':'#52614c','600');
+      text(key.name[0],x+kw/2,bottom-(compact?26:34),Math.min(10,lw*.36),'#6f7c62');
+      if(key.dots) text('•'.repeat(key.dots),x+kw/2,bottom-(compact?37:47),Math.min(9,lw*.34),'#52654a');
       text(key.solfege,padding+(key.lane+.5)*lw,height-7,Math.min(8,lw*.29),'#939a87');
     }
     roundRect(padding-6,boardTop+4,width-padding*2+12,8,3,'#aab2a2','#dce1d2');
     ctx.fillStyle='#f5f8ec88';ctx.fillRect(padding-3,boardTop+5,width-padding*2+6,1);
     // Soft top fade keeps the next notes readable beneath the caption.
-    const fade=ctx.createLinearGradient(0,0,0,43);fade.addColorStop(0,'#fafbf6');fade.addColorStop(.5,'#fafbf6ef');fade.addColorStop(1,'#fafbf600');ctx.fillStyle=fade;ctx.fillRect(0,0,width,43);
+    const fadeHeight=compact?15:43;
+    const fade=ctx.createLinearGradient(0,0,0,fadeHeight);fade.addColorStop(0,'#fafbf6');fade.addColorStop(.5,'#fafbf6ef');fade.addColorStop(1,'#fafbf600');ctx.fillStyle=fade;ctx.fillRect(0,0,width,fadeHeight);
   }
   function updateReadout(beat) {
     const position=M.clamp(Math.max(state.countTarget,beat),0,song.totalBeats);
@@ -251,7 +255,7 @@
     const measure=Math.min(song.bars,Math.floor(position/3)+1);
     $('measure-label').textContent=measure+' / '+song.bars+' 小節';
     $('elapsed').textContent=formatTime(secondsFor(position));
-    $('seek').value=position;updateSlider($('seek'));
+    if(!seeking) {$('seek').value=position;updateSlider($('seek'));}
     const active=state.playing?((Math.floor(beat)%3)+3)%3:-1;
     beatDots.forEach((dot,i)=>dot.classList.toggle('active',i===active));
     const end=bounds().end;
@@ -278,7 +282,22 @@
   $('play').addEventListener('click',play);
   $('restart').addEventListener('click',()=>{seek(bounds().start);if(!state.playing){state.fresh=true;updateControls();}});
   $('back').addEventListener('click',()=>{const beat=Math.max(state.countTarget,currentBeat());seek(Math.max(bounds().start,(Math.floor((beat+1e-7)/3)-1)*3));});
-  $('seek').addEventListener('input',e=>seek(Number(e.target.value)));
+  function beginSeek() {
+    if(seeking) return;
+    seeking=true;seekWasPlaying=state.playing;pause();
+  }
+  function endSeek() {
+    if(!seeking) return;
+    seeking=false;
+    if(seekWasPlaying && !$('settings-dialog').open && !$('help-dialog').open) play();
+    seekWasPlaying=false;
+  }
+  $('seek').addEventListener('pointerdown',beginSeek);
+  $('seek').addEventListener('input',e=>{beginSeek();seek(Number(e.target.value),false);updateSlider(e.target);});
+  $('seek').addEventListener('change',endSeek);
+  $('seek').addEventListener('blur',endSeek);
+  window.addEventListener('pointerup',endSeek);
+  window.addEventListener('pointercancel',()=>{seekWasPlaying=false;endSeek();});
   $('speed').addEventListener('input',e=>setSpeed(e.target.value));
   document.querySelectorAll('[data-speed]').forEach(b=>b.addEventListener('click',()=>setSpeed(b.dataset.speed)));
   $('lead').addEventListener('input',e=>{settings.lead=Number(e.target.value);save();syncSettings();});
@@ -299,20 +318,53 @@
     save();syncSettings();if(wasPlaying)play();
   }
   $('loop').addEventListener('change',changeLoop);$('loop-start').addEventListener('change',changeLoop);$('loop-end').addEventListener('change',changeLoop);
-  canvas.addEventListener('pointerdown',async e=>{
+  canvas.addEventListener('click',async e=>{
     const rect=canvas.getBoundingClientRect(),{padding,laneWidth,boardTop,boardBottom}=geometry();
     const x=e.clientX-rect.left,y=e.clientY-rect.top,lane=Math.floor((x-padding)/laneWidth);
     if(y<boardTop-5 || y>boardBottom || lane<0 || lane>=17) return;
     try{await ensureAudio();sound(M.keys[lane].midi,audio.currentTime,1.8);previewFlashes.set(lane,performance.now()+220);}catch(error){showNotice(error.message);}
   });
   document.addEventListener('keydown',e=>{
-    if(e.code==='Space'&&!e.repeat&&!$('help-dialog').open&&!/INPUT|BUTTON|SELECT|TEXTAREA/.test(e.target.tagName)){e.preventDefault();play();}
+    if(e.code==='Space'&&!e.repeat&&!$('help-dialog').open&&!$('settings-dialog').open&&!/INPUT|BUTTON|SELECT|TEXTAREA/.test(e.target.tagName)){e.preventDefault();play();}
   });
   document.addEventListener('visibilitychange',()=>{if(document.hidden && state.playing){pause();showNotice('画面を離れたため、一時停止しました。');}});
-  $('help').addEventListener('click',()=>{if(state.playing)pause();$('help-dialog').showModal();});
+  const openHelp=()=>{pause();$('help-dialog').showModal();};
+  $('help').addEventListener('click',openHelp);
+  $('mobile-help').addEventListener('click',openHelp);
   $('close-help').addEventListener('click',()=>$('help-dialog').close());
   $('help-dialog').addEventListener('click',e=>{if(e.target===$('help-dialog')){const r=e.target.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)e.target.close();}});
   window.addEventListener('pagehide',()=>{if(state.playing)pause();});
+  function syncLayout() {
+    document.body.classList.toggle('compact-ui',compactLayout.matches);
+    if(compactLayout.matches) $('settings-mount').append(settingsPanel);
+    else {
+      if($('settings-dialog').open) $('settings-dialog').close();
+      settingsHome.append(settingsPanel);
+    }
+  }
+  $('open-settings').addEventListener('click',()=>{
+    pause();$('settings-dialog').showModal();$('open-settings').setAttribute('aria-expanded','true');
+  });
+  $('close-settings').addEventListener('click',()=>$('settings-dialog').close());
+  $('settings-dialog').addEventListener('close',()=>$('open-settings').setAttribute('aria-expanded','false'));
+  $('settings-dialog').addEventListener('click',e=>{
+    if(e.target!==$('settings-dialog')) return;
+    const r=e.target.getBoundingClientRect();
+    if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)e.target.close();
+  });
+  compactLayout.addEventListener('change',syncLayout);
+  $('fullscreen').hidden=!document.fullscreenEnabled;
+  $('fullscreen').addEventListener('click',async()=>{
+    try {
+      if(document.fullscreenElement) await document.exitFullscreen();
+      else await document.documentElement.requestFullscreen();
+    } catch (_) {showNotice('全画面にできませんでした。横向きのまま練習できます。');}
+  });
+  document.addEventListener('fullscreenchange',()=>{
+    const label=document.fullscreenElement?'全画面を終了':'全画面にする';
+    $('fullscreen').setAttribute('aria-label',label);$('fullscreen').title=label;
+  });
+  syncLayout();
   syncSettings();
   if(settings.loop){state.position=bounds().start;state.countTarget=state.position;}
   new ResizeObserver(resize).observe(canvas);resize();updateControls();updateReadout(state.position);requestAnimationFrame(frame);
