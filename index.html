@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>こもれびカリンバ — Moon River</title>
+  <link rel="stylesheet" href="style.css">
+  <script defer src="music.js"></script>
+  <script defer src="app.js"></script>
+</head>
+<body>
+  <header class="header">
+    <div class="brand"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span><div>こもれびカリンバ<small>KALIMBA PRACTICE</small></div></div>
+    <div class="header-right"><span class="offline"><span></span>オフラインで練習</span><span class="instrument">17 keys <b>·</b> C major</span></div>
+  </header>
+  <main>
+    <section class="song-heading">
+      <div><div class="eyebrow">今日の一曲 <span>MELODY</span></div><h1>Moon River</h1><p>Henry Mancini <span>／</span> 数字付きカリンバ譜から</p></div>
+      <div class="song-meta"><div><strong>3/4</strong><span>拍子</span></div><div><strong>90</strong><span>基準 BPM</span></div><div><strong>38</strong><span>小節</span></div></div>
+    </section>
+    <div class="workspace">
+      <section class="player" aria-label="演奏画面">
+        <div class="stage-top"><span class="stage-label"><span class="live-dot"></span> <span id="status">準備できました</span></span><div class="beat-indicator" aria-label="3拍子"><i></i><i></i><i></i></div><span id="measure-label">1 / 38 小節</span></div>
+        <div class="stage" id="stage"><canvas id="roll" aria-label="17鍵のカリンバと落下マーカー。水平ラインに到達した鍵盤を弾きます。"></canvas><div class="countdown" id="countdown" hidden><span>まもなくスタート</span><strong>3</strong></div><div class="stage-caption">マーカーがラインに来たら、その鍵盤をはじきましょう</div></div>
+        <div class="transport">
+          <div class="timeline-row"><span id="elapsed">0:00</span><input id="seek" type="range" min="0" max="114" step="0.01" value="0" aria-label="曲の再生位置"><span id="duration">1:16</span></div>
+          <div class="transport-row"><div class="transport-note"><span id="next-note">次の音 <b>5 ソ</b></span><small id="next-detail">中央から右へ2本目</small></div><div class="transport-buttons"><button id="restart" class="icon-button" title="先頭へ戻る" aria-label="先頭へ戻る"><svg viewBox="0 0 24 24"><path d="M5 5v14M19 5 8 12l11 7z"/></svg></button><button id="play" class="play-button"><svg id="play-icon" viewBox="0 0 24 24"><path d="m9 5 11 7-11 7z"/></svg><span>練習をはじめる</span></button><button id="back" class="icon-button" title="1小節戻る" aria-label="1小節戻る"><svg viewBox="0 0 24 24"><path d="M8 4 3 9l5 5M3 9h11a6 6 0 0 1 0 12"/></svg></button></div><span class="shortcut"><kbd>Space</kbd> 再生 / 停止</span></div>
+        </div>
+      </section>
+      <aside class="settings" aria-label="練習設定">
+        <div class="settings-heading"><span>練習の設定</span><span class="tiny-label">YOUR PACE</span></div>
+        <section class="setting-section"><div class="setting-title"><label for="speed">再生速度</label><span><strong id="speed-value">100</strong><small>%</small></span></div><input id="speed" type="range" min="25" max="125" step="5" value="100"><div class="range-caption"><span>ゆっくり</span><span id="bpm-value">90 BPM</span></div><div class="presets"><button data-speed="50">50%</button><button data-speed="75">75%</button><button data-speed="100" class="selected">100%</button></div></section>
+        <section class="setting-section"><div class="setting-title"><label for="lead">先読み時間</label><span><strong id="lead-value">5</strong><small>秒</small></span></div><input id="lead" type="range" min="2" max="8" step="1" value="5"><p class="hint">長くすると、先の音まで見渡せます。</p></section>
+        <section class="setting-section sound-settings"><label class="toggle-row" for="guide"><span>お手本音<small>やわらかな合成カリンバ音</small></span><input id="guide" type="checkbox" checked role="switch"><span class="switch" aria-hidden="true"></span></label><label class="toggle-row" for="metronome"><span>メトロノーム</span><input id="metronome" type="checkbox" role="switch"><span class="switch" aria-hidden="true"></span></label><label class="toggle-row" for="count-in"><span>開始前に3拍カウント</span><input id="count-in" type="checkbox" checked role="switch"><span class="switch" aria-hidden="true"></span></label><div class="volume-row"><label for="volume">音量</label><input id="volume" type="range" min="0" max="100" step="1" value="45"></div></section>
+        <section class="setting-section loop-section"><label class="toggle-row" for="loop"><span>区間をくり返す</span><input id="loop" type="checkbox" role="switch"><span class="switch" aria-hidden="true"></span></label><div class="loop-fields"><label>開始小節<input id="loop-start" type="number" min="1" max="38" value="1"></label><span>—</span><label>終了小節<input id="loop-end" type="number" min="1" max="38" value="8"></label></div><p class="hint" id="loop-hint">指定した小節をくり返し練習できます。</p></section>
+        <div class="practice-tip"><span class="tip-icon">♪</span><div><strong>ひとつずつ、ゆっくり。</strong><p>はじめは50%の速さで。<br>音が長くても、はじくのは1回です。</p></div></div>
+      </aside>
+    </div>
+    <footer><span>数字と上の点は、実機の刻印に対応しています。画面の鍵盤を押すと音を確認できます。</span><button id="help" class="text-button">使い方・曲について</button></footer>
+    <p id="notice" role="status" class="notice" hidden></p>
+  </main>
+  <dialog id="help-dialog"><button id="close-help" class="close-button" aria-label="閉じる">×</button><div class="eyebrow">QUICK GUIDE</div><h2>画面を見ながら、実機で演奏。</h2><ol><li>カリンバを画面と同じ向きで持ちます。中央が「1 / C」です。</li><li>「練習をはじめる」を押すと、3拍のカウント後に曲が始まります。</li><li>マーカーの中央が水平ラインに来たら、その列の鍵盤を1回はじきます。</li><li>苦手な部分は速度を下げ、開始・終了小節を指定してくり返しましょう。</li></ol><p>点1つは1オクターブ上、点2つは2オクターブ上です。色は左側・中央・右側の位置の目印です。</p><p>タイでつながる音は弾き直しません。区間の途中から始める場合も、タイの途中に新しいマーカーは出ません。</p><hr><h3>この試作について</h3><p>ご提供いただいた「Kalimba Class / Moon River」の譜面を入力した、単音メロディー版です。3/4拍子、原速90 BPM、全38小節。お手本音は合成音です。</p><p>実機の音の認識・採点はありません。曲はMoon Riverを内蔵しています。MIDIの読み込みは今後の拡張対象です。</p><p>設定はこのブラウザーに保存します。別のタブに移ったときは、練習を自動で一時停止します。</p></dialog>
+</body>
+</html>

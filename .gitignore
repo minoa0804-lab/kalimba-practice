@@ -1,0 +1,18 @@
+# Local reference images used while transcribing the supplied score
+/score-inspection.png
+/score-detail.png
+
+# Temporary files and local configuration
+/github-*.jpg
+/github-*.png
+*.log
+*.tmp
+*.zip
+.env
+.env.*
+!.env.example
+node_modules/
+.DS_Store
+Thumbs.db
+.codex/
+.agents/
